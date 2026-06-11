@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>BLE Trigger</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #111; color: white; }
+    button { padding: 20px 40px; font-size: 20px; border-radius: 12px; border: none; background: #1db954; color: white; margin-top: 20px; }
+    #status { margin-top: 20px; font-size: 16px; color: #aaa; }
+  </style>
+</head>
+<body>
+  <h2>Sonos BLE Trigger</h2>
+  <button onclick="connect()">Connect to Arduino</button>
+  <div id="status">Not connected</div>
+
+  <script>
+    let characteristic;
+
+    async function connect() {
+      try {
+        document.getElementById('status').innerText = 'Scanning...';
+        const device = await navigator.bluetooth.requestDevice({
+          filters: [{ name: 'DSD TECH' }],
+          optionalServices: ['0000ffe0-0000-1000-8000-00805f9b34fb']
+        });
+        const server = await device.gatt.connect();
+        const service = await server.getPrimaryService('0000ffe0-0000-1000-8000-00805f9b34fb');
+        characteristic = await service.getCharacteristic('0000ffe1-0000-1000-8000-00805f9b34fb');
+        await characteristic.startNotifications();
+        characteristic.addEventListener('characteristicvaluechanged', handleData);
+        document.getElementById('status').innerText = 'Connected — waiting for button press';
+      } catch(e) {
+        document.getElementById('status').innerText = 'Error: ' + e.message;
+      }
+    }
+
+    function handleData(event) {
+      const value = new TextDecoder().decode(event.target.value);
+      if (value.includes('RUN')) {
+        document.getElementById('status').innerText = 'Triggered! Opening Shortcut...';
+        window.location.href = 'shortcuts://run-shortcut?name=sonos_group';
+      }
+    }
+  </script>
+</body>
+</html>
