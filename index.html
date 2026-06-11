@@ -37,9 +37,18 @@
 
     function handleData(event) {
       const value = new TextDecoder().decode(event.target.value);
-      if (value.includes('RUN')) {
-        document.getElementById('status').innerText = 'Triggered! Opening Shortcut...';
-        window.location.href = 'shortcuts://run-shortcut?name=lauren';
+      if (value.includes('BTN1')) {
+        document.getElementById('status').innerText = 'BTN1 — running sonos_1';
+        window.location.href = 'shortcuts://run-shortcut?name=sonos_1';
+      } else if (value.includes('BTN2')) {
+        document.getElementById('status').innerText = 'BTN2 — running sonos_2';
+        window.location.href = 'shortcuts://run-shortcut?name=sonos_2';
+      } else if (value.includes('BTN3')) {
+        document.getElementById('status').innerText = 'BTN3 — running sonos_3';
+        window.location.href = 'shortcuts://run-shortcut?name=sonos_3';
+      } else if (value.includes('BTN4')) {
+        document.getElementById('status').innerText = 'BTN4 — running sonos_4';
+        window.location.href = 'shortcuts://run-shortcut?name=sonos_4';
       }
     }
   </script>
